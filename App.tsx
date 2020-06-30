@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Button, TextInput } from "react-native";
+import { StyleSheet, Text, View, Button, TextInput, ScrollView, FlatList } from "react-native";
 
 interface IToDo {
   id: string
@@ -9,6 +9,7 @@ interface IToDo {
 }
 
 export default function App() {
+  const [themeMode, setThemeMode] = useState('light')
   const [thingsToDo, setThingsToDo] = useState<IToDo[]>([]);
   const [inputValue, setInputValue] = useState<string>('')
 
@@ -35,23 +36,27 @@ export default function App() {
         <Button title='Add' onPress={() => addToDo({ id: Math.random().toString(), text: inputValue, completed: false })} />
       </View>
 
-      <View>
-        {thingsToDo.map(item => (
-          <View key={item.id} style={styles.toDoListItem} >
-            <Text style={{ flex: 1, paddingLeft: 10 }}>{item.text}</Text>
-            <Button title='DELETE' onPress={() => null} />
-          </View>
-        ))}
-      </View>
+      <FlatList data={thingsToDo} renderItem={listData => (
+        <View style={styles.toDoListItem} >
+          <Text style={{ flex: 1, paddingLeft: 10 }}>{listData.item.text}</Text>
+          <Button title='DELETE' onPress={() => null} />
+        </View>
+      )} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 30,
-    borderColor: "red",
-    borderWidth: 1,
+    paddingTop: 30,
+    paddingHorizontal: 10
+  },
+
+  startText: {
+    fontSize: 25,
+    textAlign: "center",
+    marginBottom: 10,
+    textDecorationLine: 'underline'
   },
 
   mainHeader: {
@@ -67,19 +72,16 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
 
-  startText: {
-    fontSize: 25,
-    textAlign: "center",
-    marginBottom: 10,
-  },
+  
 
   toDoListItem: {
     flexDirection: 'row',
     justifyContent: "space-evenly",
     alignItems: 'center',
-    borderBottomColor: 'black',
-    borderBottomWidth: 1,
+    backgroundColor: 'grey',
+    borderColor: 'black',
+    borderWidth: 1,
     marginTop: 20,
-    paddingBottom: 5
+    padding: 5
   }
 });
