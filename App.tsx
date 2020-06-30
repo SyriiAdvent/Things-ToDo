@@ -1,6 +1,9 @@
-import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Button, TextInput, ScrollView, FlatList } from "react-native";
+import { Text, View, Button, TextInput, FlatList } from "react-native";
+import { CheckBox } from 'react-native-elements'
+
+import styles from './styles'
+import idGen from './utils/idGenerater'
 
 interface IToDo {
   id: string
@@ -9,7 +12,6 @@ interface IToDo {
 }
 
 export default function App() {
-  const [themeMode, setThemeMode] = useState('light')
   const [thingsToDo, setThingsToDo] = useState<IToDo[]>([]);
   const [inputValue, setInputValue] = useState<string>('')
 
@@ -18,9 +20,26 @@ export default function App() {
   }
 
   const addToDo = (item: IToDo) => {
-    setThingsToDo([...thingsToDo, item]);
-    setInputValue('');
+    if(item.text.length >= 1) {
+      setThingsToDo([...thingsToDo, item]);
+      setInputValue('');
+    }
   };
+
+  const completedHandler = (thingsToDoId: string) => {
+    const newArr = [...thingsToDo]
+    const arrIndex = newArr.findIndex(item => item.id === thingsToDoId)
+    newArr[arrIndex] = {
+      ...newArr[arrIndex], completed: !newArr[arrIndex].completed
+    }
+
+    setThingsToDo(newArr)
+  }
+
+  const deleteItem = (thingsToDoId: string) => {
+    const update = thingsToDo.filter(del => del.id !== thingsToDoId)
+    setThingsToDo(update)
+  }
 
   return (
     <View style={styles.container}>
@@ -28,60 +47,23 @@ export default function App() {
 
       <View style={styles.mainHeader}>
         <TextInput
-          placeholder=' Things to do.'
+          placeholder={inputValue.length >= 1 ? '' : 'Things to do.'}
           style={styles.toDoInputContainer}
           onChangeText={handleChange}
           value={inputValue}
         />
-        <Button title='Add' onPress={() => addToDo({ id: Math.random().toString(), text: inputValue, completed: false })} />
+        <Button title='Add' onPress={() => addToDo({ id: idGen(), text: inputValue, completed: false })} />
       </View>
 
       <FlatList data={thingsToDo} renderItem={listData => (
         <View style={styles.toDoListItem} >
-          <Text style={{ flex: 1, paddingLeft: 10 }}>{listData.item.text}</Text>
-          <Button title='DELETE' onPress={() => null} />
+          <CheckBox center size={24} checkedColor='green' checked={listData.item.completed} onPress={() => completedHandler(listData.item.id)} />
+          <Text style={styles.listText}>{listData.item.text}</Text>
+          {
+            listData.item.completed === true ? <Button title='DELETE' color='red' onPress={() => deleteItem(listData.item.id)} /> : null
+          }
         </View>
       )} />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingTop: 30,
-    paddingHorizontal: 10
-  },
-
-  startText: {
-    fontSize: 25,
-    textAlign: "center",
-    marginBottom: 10,
-    textDecorationLine: 'underline'
-  },
-
-  mainHeader: {
-    flexDirection: "row",
-    justifyContent: "space-evenly",
-    alignItems: "center",
-  },
-
-  toDoInputContainer: {
-    width: "80%",
-    borderColor: "black",
-    borderWidth: 1,
-    borderRadius: 2,
-  },
-
-  
-
-  toDoListItem: {
-    flexDirection: 'row',
-    justifyContent: "space-evenly",
-    alignItems: 'center',
-    backgroundColor: 'grey',
-    borderColor: 'black',
-    borderWidth: 1,
-    marginTop: 20,
-    padding: 5
-  }
-});
