@@ -2,8 +2,12 @@ import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   container: {
+    height: '100%',
+    flexDirection: "column",
     paddingTop: 30,
-    paddingHorizontal: 10
+    paddingBottom: 15,
+    paddingHorizontal: 10,
+    justifyContent: 'space-between'
   },
 
   startText: {
@@ -13,18 +17,23 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline'
   },
 
-  mainHeader: {
+  inputContainer: {
     flexDirection: "row",
     justifyContent: "space-evenly",
-    alignItems: "center",
+    alignItems: "center"
   },
 
   toDoInputContainer: {
     width: "80%",
+    marginTop: 10,
     paddingLeft: 10,
     borderColor: "black",
     borderWidth: 1,
     borderRadius: 2,
+  },
+
+  toDoListItemContainer: {
+    
   },
 
   toDoListItem: {

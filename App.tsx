@@ -45,7 +45,17 @@ export default function App() {
     <View style={styles.container}>
       <Text style={styles.startText}>Things</Text>
 
-      <View style={styles.mainHeader}>
+      <FlatList style={styles.toDoListItemContainer} data={thingsToDo} renderItem={listData => (
+        <View style={styles.toDoListItem} >
+          <CheckBox center size={24} checkedColor='green' checked={listData.item.completed} onPress={() => completedHandler(listData.item.id)} />
+          <Text style={styles.listText}>{listData.item.text}</Text>
+          {
+            listData.item.completed === true ? <Button title='DELETE' color='red' onPress={() => deleteItem(listData.item.id)} /> : null
+          }
+        </View>
+      )} />
+
+      <View style={styles.inputContainer}>
         <TextInput
           placeholder={inputValue.length >= 1 ? '' : 'Things to do.'}
           style={styles.toDoInputContainer}
@@ -55,15 +65,6 @@ export default function App() {
         <Button title='Add' onPress={() => addToDo({ id: idGen(), text: inputValue, completed: false })} />
       </View>
 
-      <FlatList data={thingsToDo} renderItem={listData => (
-        <View style={styles.toDoListItem} >
-          <CheckBox center size={24} checkedColor='green' checked={listData.item.completed} onPress={() => completedHandler(listData.item.id)} />
-          <Text style={styles.listText}>{listData.item.text}</Text>
-          {
-            listData.item.completed === true ? <Button title='DELETE' color='red' onPress={() => deleteItem(listData.item.id)} /> : null
-          }
-        </View>
-      )} />
     </View>
   );
 }
